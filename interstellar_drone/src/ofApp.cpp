@@ -339,8 +339,6 @@ void ofApp::drawHealth(){
 //--------------------------------------------------------------
 void ofApp::assessHealth(){
     
-    //THIS DOES NOT CURRENTLY FACTOR IN PRC SHIFTED SOUNDS (startPrcShift in Sound)
-    
     //cout<<"-- HEALTH --"<<endl;
     
     for (int b=0; b<NUM_HEALTH_BANDS; b++){
