@@ -25,12 +25,11 @@ void ShipProjectile::update(float delta_time){
 }
 void ShipProjectile::draw(){
     
-    ofSetColor(255);        //white means something is wrong because no type matched
+    ofSetColor(66, 244, 197);
     
     if (type == PROJ_COMBINE)  ofSetColor(0,0,255);
     if (type == PROJ_SPLIT)    ofSetColor(0,255,0);
     if (type == PROJ_TOGGLE)   ofSetColor(255,0,0);
-    if (type == PROJ_VOL_UP || type == PROJ_VOL_DOWN) ofSetColor(66, 244, 197);
     if (type == PROJ_SWAP)     ofSetColor(224, 226, 104);
     
     ofFill();
@@ -42,6 +41,8 @@ void ShipProjectile::draw(){
     if (type == PROJ_TOGGLE)   letter = "T";
     if (type == PROJ_VOL_UP)   letter = "+";
     if (type == PROJ_VOL_DOWN) letter = "-";
+    if (type == PROJ_SHIFT_UP)     letter = ">";
+    if (type == PROJ_SHIFT_DOWN)     letter = "<";
     if (type == PROJ_SWAP)     letter = "?";
     ofSetColor(0);
     ofDrawBitmapString(letter, pos.x -4, pos.y+4);

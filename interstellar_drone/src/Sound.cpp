@@ -17,6 +17,8 @@ Sound::Sound(string filePath, string fileName){
     //addCycle();
     
     curSamplePrc = 0;
+    
+    startCycleShift = 0;
     startPrcShift = 0;
     
     masterVolume = 1;
@@ -484,10 +486,21 @@ void Sound::muteAllExcept(int cycleToLeaveOn){
 }
 
 void Sound::shiftStartPoint(int dir){
-    startPrcShift += dir * (1.0f/(float)totalCycles);
-    if (startPrcShift >= 1.0f)   startPrcShift -= 1.0f;
-    if (startPrcShift < 0.0f)   startPrcShift += 1.0f;
-    cout<<"shift "<<startPrcShift<<endl;
+    startCycleShift += dir;
+    if (startCycleShift < 0){
+        startCycleShift += totalCycles;
+    }
+    if (startCycleShift >= totalCycles){
+        startCycleShift -= totalCycles;
+    }
+    
+    startPrcShift = (float)startCycleShift / (float) totalCycles;
+    
+//    startPrcShift += dir * (1.0f/(float)totalCycles);
+//    if (startPrcShift >= 1.0f)   startPrcShift -= 1.0f;
+//    if (startPrcShift < 0.0f)   startPrcShift += 1.0f;
+    cout<<"shift cycles "<<startCycleShift<<endl;
+    cout<<"shift prc "<<startPrcShift<<endl;
 }
 
 void Sound::cleanUp(){

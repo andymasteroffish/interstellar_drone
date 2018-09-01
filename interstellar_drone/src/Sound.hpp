@@ -60,6 +60,7 @@ public:
     int curCycle;
     float curSamplePrc;
     
+    int startCycleShift;
     float startPrcShift;
     
     

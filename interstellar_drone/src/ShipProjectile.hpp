@@ -15,8 +15,10 @@
 #define PROJ_TOGGLE 2
 #define PROJ_VOL_UP 3
 #define PROJ_VOL_DOWN 4
-#define PROJ_SWAP 5
-#define NUM_PROJECTILES 6
+#define PROJ_SHIFT_UP 5
+#define PROJ_SHIFT_DOWN 6
+#define PROJ_SWAP 7
+#define NUM_PROJECTILES 8
 
 class ShipProjectile{
 public:

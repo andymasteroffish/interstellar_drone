@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 bool fixed_test = true;
+int starting_sounds = 9;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -53,8 +54,7 @@ void ofApp::loadFiles(){
     files  = dir.getFiles();
     
     //grab a few at random
-    int num_to_grab = 10;
-    for (int i=0; i<num_to_grab; i++){
+    for (int i=0; i<starting_sounds; i++){
         makeNode();
     }
    
@@ -92,7 +92,6 @@ void ofApp::makeNode(){
         node->pos.x = 200 + (nodes.size() % cols) * spacing_x;
         node->pos.y = 200 + (nodes.size() / cols) * spacing_y;
         node->vel.set(0,0);
-        node->angle_deg = 0;
     }
     
     nodes.push_back(node);
@@ -272,6 +271,8 @@ void ofApp::draw(){
     if (selected_projectile == PROJ_TOGGLE)   projectile_name += "Toggle";
     if (selected_projectile == PROJ_VOL_UP)   projectile_name += "Vol Up";
     if (selected_projectile == PROJ_VOL_DOWN) projectile_name += "Vol Down";
+    if (selected_projectile == PROJ_SHIFT_UP) projectile_name += "Shift Up";
+    if (selected_projectile == PROJ_SHIFT_DOWN) projectile_name += "Shift Down";
     if (selected_projectile == PROJ_SWAP)     projectile_name += "Swap";
     
     ofSetColor(255);
@@ -354,7 +355,7 @@ void ofApp::assessHealth(){
     for (int n=0; n<nodes.size(); n++){
         vector<CycleInfo> node_info = nodes[n]->assessHealth(timeline_duration);
         
-        cout<<nodes[n]->sound->sampleFileName<<":"<<endl;
+        //cout<<"chekcing "<<nodes[n]->sound->sampleFileName<<":"<<endl;
         for (int i=0; i<NUM_CYCLES; i++){
             if (node_info[i].is_on){
                 //cout<<"X";
@@ -424,6 +425,12 @@ void ofApp::keyPressed(int key){
     }
     if (key == 'b'){
         selected_projectile = PROJ_SPLIT;
+    }
+    if (key == '.'){
+        selected_projectile = PROJ_SHIFT_UP;
+    }
+    if (key == ','){
+        selected_projectile = PROJ_SHIFT_DOWN;
     }
     
     if (key == '='){

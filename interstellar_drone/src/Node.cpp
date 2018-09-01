@@ -10,7 +10,7 @@
 Node::Node(string file_path, string file_name, float start_x, float start_y, float timeline_length){
     
     pos.set(start_x, start_y);
-    angle_deg = ofRandom(0,360);
+    angle_rad = 0;
     hit_size = 50;
     
     float speed = 25;
@@ -100,7 +100,7 @@ bool Node::checkHit(ShipProjectile proj){
         
         float angle_step = TWO_PI / (float)sound->totalCycles;
         
-        float cur_angle = 0;
+        float cur_angle = angle_rad;
         for (int i=0; i<sound->cycles.size(); i++){
             cur_angle += (float)sound->cycles[i].duration * angle_step;
             if (angle_to_center < cur_angle){
@@ -126,6 +126,18 @@ void Node::doHit(int type, int target_cycle){
     if (type == PROJ_VOL_DOWN){
         sound->masterVolume = MAX(sound->masterVolume-0.1, 0);
         hit_size = MAX(hit_size-5, 5);
+        return;
+    }
+    
+    //same for shift
+    if (type == PROJ_SHIFT_DOWN){
+        sound->shiftStartPoint(1);
+        angle_rad -= TWO_PI / (float)sound->totalCycles;
+        return;
+    }
+    if (type == PROJ_SHIFT_UP){
+        sound->shiftStartPoint(-1);
+        angle_rad += TWO_PI / (float)sound->totalCycles;
         return;
     }
     
@@ -174,7 +186,7 @@ void Node::draw(float timeline_length){
     
     ofPushMatrix();
     ofTranslate(pos.x, pos.y);
-    ofRotate(angle_deg);
+    ofRotate( ofRadToDeg(angle_rad) );
     
     //outline
 //    ofNoFill();
@@ -253,16 +265,27 @@ void Node::cleanUp(){
 
 vector<CycleInfo> Node::assessHealth(float timeline_duration){
     vector<CycleInfo> vals;
+    vals.assign(sound->totalCycles, CycleInfo());
+    
     int cur_cycle = 0;
     int cur_duration = 0;
     
+    //cout<<"check "<<sound->sampleFileName<<endl;
+    
     for (int i=0; i<sound->totalCycles; i++){
         //cout<<"cycle: "<<cur_cycle<<"   duration: "<<cur_duration<<endl;
-        CycleInfo this_info;
-        this_info.is_on = sound->cycles[cur_cycle].is_active;
-        this_info.volume = sound->masterVolume;
-        this_info.speed = sound->getPlaybackPrcForCycle(cur_cycle, timeline_duration);
-        vals.push_back(this_info);
+        
+        int id = i-sound->startCycleShift;
+        //cout<<i<<" shifted "<<id<<endl;
+        if (id < 0){
+            id += sound->totalCycles;
+        }
+        //cout<<i<<" shifted "<<id<<endl;
+        
+        vals[id].is_on = sound->cycles[cur_cycle].is_active;
+        vals[id].volume = sound->masterVolume;
+        vals[id].speed = sound->getPlaybackPrcForCycle(cur_cycle, timeline_duration);
+        //vals.push_back(this_info);
         
         //cout<<"  vol: "<<this_info.volume<<endl;
         
@@ -272,6 +295,11 @@ vector<CycleInfo> Node::assessHealth(float timeline_duration){
             cur_duration = 0;
         }
     }
+    
+    //shift them as needed
+//    for (int i=0; i<sound->startCycleShift; i++){
+//
+//    }
     
     return  vals;
 }

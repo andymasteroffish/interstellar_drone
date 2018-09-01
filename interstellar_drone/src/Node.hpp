@@ -31,7 +31,7 @@ public:
     
     ofVec2f pos;
     ofVec2f vel;
-    float angle_deg;
+    float angle_rad;
     
     float hit_size;
     
