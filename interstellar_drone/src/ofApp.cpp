@@ -166,25 +166,30 @@ void ofApp::update(){
         
         //did it hit anything?
         for (int n=nodes.size()-1; n>=0; n--){
-            if (ofDistSquared(ship_projectiles[p].pos.x, ship_projectiles[p].pos.y, nodes[n]->pos.x, nodes[n]->pos.y) < powf(ship_projectiles[p].hit_size + nodes[n]->hit_size, 2) ){
-                
-                //do the effect
-                if (ship_projectiles[p].type == PROJ_SWAP){
-                    float old_x = nodes[n]->pos.x;
-                    float old_y = nodes[n]->pos.y;
-                    nodes[n]->cleanUp();
-                    delete nodes[n];
-                    nodes.erase(nodes.begin()+n);
-                    makeNode();
-                    nodes[nodes.size()-1]->pos.set(old_x, old_y);
-                }else{
-                    nodes[n]->doHit(ship_projectiles[p].type);
-                }
-                
-                //remove the projectile
+            if (nodes[n]->checkHit(ship_projectiles[p])){
                 ship_projectiles.erase(ship_projectiles.begin() + p);
                 break;
             }
+            
+//            if (ofDistSquared(ship_projectiles[p].pos.x, ship_projectiles[p].pos.y, nodes[n]->pos.x, nodes[n]->pos.y) < powf(ship_projectiles[p].hit_size + nodes[n]->hit_size, 2) ){
+//                
+//                //do the effect
+//                if (ship_projectiles[p].type == PROJ_SWAP){
+//                    float old_x = nodes[n]->pos.x;
+//                    float old_y = nodes[n]->pos.y;
+//                    nodes[n]->cleanUp();
+//                    delete nodes[n];
+//                    nodes.erase(nodes.begin()+n);
+//                    makeNode();
+//                    nodes[nodes.size()-1]->pos.set(old_x, old_y);
+//                }else{
+//                    nodes[n]->doHit(ship_projectiles[p].type);
+//                }
+//                
+//                //remove the projectile
+//                ship_projectiles.erase(ship_projectiles.begin() + p);
+//                break;
+//            }
         }
     }
     
@@ -281,7 +286,7 @@ void ofApp::drawHealth(){
     
     
     ofPushMatrix();
-    ofTranslate(60, ofGetHeight() - 100);
+    ofTranslate(80, ofGetHeight() - 100);
     
     int box_w = 40;
     int box_h = 30;
@@ -296,7 +301,6 @@ void ofApp::drawHealth(){
             
             
             //fill
-            
             if (health_info[b][c].is_on){
                 ofFill();
                 ofSetColor(255,255,255,100);
@@ -316,6 +320,10 @@ void ofApp::drawHealth(){
             
             if (c == 0){
                 ofDrawBitmapString(">"+ofToString(health_info[b][0].speed)+"%", -50, box_h/2+8);
+            }
+            
+            if (c==NUM_CYCLES-1){
+                ofDrawBitmapString(ofToString( (int)(health_band_total_vol[b]*100) / 100.0 ), box_w + 10, box_h/2+8);
             }
             
             ofPopMatrix();
@@ -339,6 +347,7 @@ void ofApp::assessHealth(){
             health_info[b][c].is_on = false;
             health_info[b][c].volume = 0;
         }
+        health_band_total_vol[b] = 0;
     }
     
     //go through each sound and get that info
@@ -356,6 +365,7 @@ void ofApp::assessHealth(){
                         health_info[b][i].is_on = true;
                         //cout<<"  dis vol "<<node_info[i].volume<<endl;
                         health_info[b][i].volume += node_info[i].volume;
+                        health_band_total_vol[b] += node_info[i].volume;
                         //cout<<"  globvol "<<health_info[b][i].volume<<endl;
                         break;
                     }
@@ -408,6 +418,12 @@ void ofApp::keyPressed(int key){
     
     if (key == 't'){
         selected_projectile = PROJ_TOGGLE;
+    }
+    if (key == 'c'){
+        selected_projectile = PROJ_COMBINE;
+    }
+    if (key == 'b'){
+        selected_projectile = PROJ_SPLIT;
     }
     
     if (key == '='){

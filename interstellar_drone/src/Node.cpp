@@ -87,7 +87,36 @@ void Node::updateAudio(float playback_prc){
     sound->updateAudio(playback_prc);
 }
 
-void Node::doHit(int type){
+
+bool Node::checkHit(ShipProjectile proj){
+    //did it event hit?
+    if (ofDistSquared(proj.pos.x, proj.pos.y, pos.x, pos.y) < powf(proj.hit_size + hit_size, 2) ){
+        //if so, which cycle?
+        float angle_to_center = atan2(proj.pos.y-pos.y, proj.pos.x-pos.x);
+        if (angle_to_center < 0){
+            angle_to_center += TWO_PI;
+        }
+        cout<<"angle to center :"<<angle_to_center<<endl;
+        
+        float angle_step = TWO_PI / (float)sound->totalCycles;
+        
+        float cur_angle = 0;
+        for (int i=0; i<sound->cycles.size(); i++){
+            cur_angle += (float)sound->cycles[i].duration * angle_step;
+            if (angle_to_center < cur_angle){
+                doHit(proj.type, i);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void Node::doHit(int type, int target_cycle){
+    if (type == PROJ_SWAP){
+        cout<<"SWAP DOES NOT WORK RIGHT NOW"<<endl;
+        return;
+    }
     //volume changes the whole thing
     if (type == PROJ_VOL_UP){
         sound->masterVolume += 0.1;
@@ -102,7 +131,7 @@ void Node::doHit(int type){
     
     
     //find the next cycle. toggle can do any
-    int target_cycle = sound->curCycle;
+    //int target_cycle = sound->curCycle;
 //    if (type != PROJ_TOGGLE){
 //        for (int i=0; i<sound->cycles.size(); i++){
 //            if (sound->cycles[target_cycle].is_active){

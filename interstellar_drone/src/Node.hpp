@@ -20,7 +20,8 @@ public:
     void update(float delta_time);
     void updateAudio(float originalPlaybackPrc);
     
-    void doHit(int type);
+    bool checkHit(ShipProjectile proj);
+    void doHit(int type, int target_cycle);
     
     void draw(float timeline_length);
     

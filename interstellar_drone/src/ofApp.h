@@ -86,6 +86,7 @@ public:
     #define NUM_HEALTH_BANDS 3
     #define NUM_CYCLES 12          //MUST MATCH THE NODES
     CycleInfo health_info[NUM_HEALTH_BANDS][NUM_CYCLES];
+    float health_band_total_vol[NUM_HEALTH_BANDS];
     
     
 };
