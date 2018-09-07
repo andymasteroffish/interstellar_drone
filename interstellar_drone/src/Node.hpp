@@ -12,11 +12,12 @@
 #include "Sound.hpp"
 #include "ShipProjectile.hpp"
 #include "CycleInfo.h"
+#include "Ship.hpp"
 
 class Node{
 public:
     
-    Node(string file_path, string file_name, float start_x, float start_y, float timeline_length);
+    Node(string file_path, string file_name, float start_x, float start_y, float timeline_length, Ship * _ship);
     void update(float delta_time);
     void updateAudio(float originalPlaybackPrc);
     
@@ -37,7 +38,13 @@ public:
     
     Sound * sound;
     
+    bool is_out_of_isolate_range;
+    float cur_isolate_vol_adjust;
+    
     bool kill_me;
+    
+    
+    Ship * ship;
     
 };
 

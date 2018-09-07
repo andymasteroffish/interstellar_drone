@@ -98,7 +98,7 @@ void Sound::loadSound(string filePath, string fileName){
     
 }
 
-void Sound::updateAudio(float originalPlaybackPrc){
+void Sound::updateAudio(float originalPlaybackPrc,  float isolate_vol_adjust){
     //millisTimer += ofGetElapsedTimeMillis()-lastMillisTime;
     
     float playbackPrc = originalPlaybackPrc + startPrcShift;
@@ -135,6 +135,9 @@ void Sound::updateAudio(float originalPlaybackPrc){
     
     //check the visual component
     ampLeftToMovePixelPos -= abs(audioValue);
+    
+    //if the player is isolating, and the node is out of range, mute the sound
+    audioValue *= isolate_vol_adjust;
 }
 
 void Sound::draw(int orderPos, float totalTimelineDuration){

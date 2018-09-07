@@ -11,11 +11,14 @@ void Ship::setup(){
     move_speed = 200;
     rot_speed = TWO_PI;
     
+    isolate_range = 100;
+    
     pos.set(ofGetWidth()/2, ofGetHeight()/2);
     
     up_is_held = false;
     left_is_held = false;
     right_is_held = false;
+    
     
 }
 
@@ -30,6 +33,8 @@ void Ship::update(float delta_time){
     if (right_is_held){
         angle_rad += rot_speed * delta_time;
     }
+    
+   
 }
 
 void Ship::draw(){
@@ -38,6 +43,12 @@ void Ship::draw(){
     
     ofTranslate(pos.x, pos.y);
     ofRotate( ofRadToDeg(angle_rad) );
+    
+    if (isolate_active){
+        ofFill();
+        ofSetColor(255, 100);
+        ofDrawCircle(0, 0, isolate_range);
+    }
     
     ofSetColor(255);
     ofFill();
@@ -60,6 +71,10 @@ void Ship::keyPressed(int key){
         right_is_held = true;
     }
     
+    if (key == 'i'){
+        isolate_active = true;
+    }
+    
 }
 void Ship::keyReleased(int key){
     if (key == 'w'){
@@ -70,5 +85,9 @@ void Ship::keyReleased(int key){
     }
     if (key == 'd'){
         right_is_held = false;
+    }
+    
+    if (key == 'i'){
+        isolate_active = false;
     }
 }

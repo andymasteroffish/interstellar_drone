@@ -83,7 +83,7 @@ void ofApp::makeNode(){
     float padding = 50;
     float start_x = ofRandom(padding, ofGetWidth()-padding);
     float start_y = ofRandom(padding, ofGetHeight()-padding);
-    Node * node = new Node(file.getAbsolutePath(), file.getFileName(), start_x, start_y, timeline_duration);
+    Node * node = new Node(file.getAbsolutePath(), file.getFileName(), start_x, start_y, timeline_duration, &ship);
     
     if (fixed_test){
         int spacing_x = 300;

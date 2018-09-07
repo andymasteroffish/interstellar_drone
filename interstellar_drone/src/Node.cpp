@@ -7,11 +7,13 @@
 
 #include "Node.hpp"
 
-Node::Node(string file_path, string file_name, float start_x, float start_y, float timeline_length){
+Node::Node(string file_path, string file_name, float start_x, float start_y, float timeline_length, Ship * _ship){
     
     pos.set(start_x, start_y);
     angle_rad = 0;
     hit_size = 50;
+    
+    ship = _ship;
     
     float speed = 25;
     float move_angle = ofRandom(TWOPI);
@@ -19,6 +21,9 @@ Node::Node(string file_path, string file_name, float start_x, float start_y, flo
     vel.y = sin(move_angle) * speed;
     
     kill_me = false;
+    
+    is_out_of_isolate_range = false;
+    cur_isolate_vol_adjust = 1;
     
     //make the new sound
     sound = new Sound(file_path, file_name);
@@ -35,6 +40,7 @@ Node::Node(string file_path, string file_name, float start_x, float start_y, flo
     for (int i=0; i<cycles_to_combine; i++){
         sound->combineCycles( (int)ofRandom(sound->cycles.size()-1) );
     }
+    
     
     //turn a few on
 //    int num_turned_on = 0;
@@ -81,10 +87,21 @@ void Node::update(float delta_time){
     if(pos.y+hit_size > ofGetHeight()){
         vel.y = -abs(vel.y);
     }
+    
+    //check if the player is isolating
+    //if so, only nodes within range will play
+    is_out_of_isolate_range = false;
+    if (ship->isolate_active){
+        is_out_of_isolate_range = ofDistSquared(pos.x, pos.y, ship->pos.x, ship->pos.y) > powf( ship->isolate_range+hit_size, 2);
+    }
+    
+    float iso_xeno = 0.9f;
+    cur_isolate_vol_adjust = iso_xeno * cur_isolate_vol_adjust + (1.0-iso_xeno) * (is_out_of_isolate_range ? 0.0 : 1.0);
 }
 
 void Node::updateAudio(float playback_prc){
-    sound->updateAudio(playback_prc);
+    float isolate_vol = 1;
+    sound->updateAudio(playback_prc, cur_isolate_vol_adjust);
 }
 
 
@@ -96,7 +113,7 @@ bool Node::checkHit(ShipProjectile proj){
         if (angle_to_center < 0){
             angle_to_center += TWO_PI;
         }
-        cout<<"angle to center :"<<angle_to_center<<endl;
+        //cout<<"angle to center :"<<angle_to_center<<endl;
         
         float angle_step = TWO_PI / (float)sound->totalCycles;
         
@@ -182,7 +199,11 @@ void Node::draw(float timeline_length){
     ofColor on_col(255,115,76);
     ofColor off_col(255,115,76,100);
     
-    ofSetColor(on_col);
+    //if the player is isolating, only sounds close by will play and the rest should be faded
+    if(is_out_of_isolate_range){
+        on_col.a = 100;
+        off_col.a = 20;
+    }
     
     ofPushMatrix();
     ofTranslate(pos.x, pos.y);

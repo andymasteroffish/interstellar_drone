@@ -19,7 +19,7 @@ public:
     
     Sound(string filePath, string fileName);
     void loadSound(string filePath, string fileName);
-    void updateAudio(float originalPlaybackPrc);
+    void updateAudio(float originalPlaybackPrc, float isolate_vol_adjust);
     
     void draw(int orderPos, float totalTimelineDuration);
     void updateExternalDisplayInfo();

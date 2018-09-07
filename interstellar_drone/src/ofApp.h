@@ -5,7 +5,7 @@
 #include "ofxMaxim.h"
 
 #include "Node.hpp"
-#include "Ship.hpp"
+
 #include "ShipProjectile.hpp"
 #include "DisplayWindow.hpp"
 
